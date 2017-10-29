@@ -1,5 +1,7 @@
 package gti310.tp2;
 
+import gti310.tp2.audio.ConcreteAudioFilter;
+
 public class Application {
 
 	/**
@@ -10,6 +12,11 @@ public class Application {
 		if(args[0].equals("StereoMono")){
 			System.out.println("Stereo to mono project");
 			ConcreteAudioFilter concreteFilter = new ConcreteAudioFilter(args[1], args[2]);
+			concreteFilter.process();
+		}
+		else if(args[0].equals("SNR")) {
+			System.out.println("SNR project");
+			SNRFilter snrFilter = new SNRFilter()
 		}
 	}
 }
