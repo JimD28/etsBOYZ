@@ -7,6 +7,9 @@ public class Application {
 	 * @param args This parameter is ignored
 	 */
 	public static void main(String args[]) {
-		System.out.println("Audio Resample project!");
+		if(args[0].equals("StereoMono")){
+			System.out.println("Stereo to mono project");
+			ConcreteAudioFilter concreteFilter = new ConcreteAudioFilter(args[1], args[2]);
+		}
 	}
 }
