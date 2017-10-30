@@ -9,7 +9,7 @@ import java.io.IOException;
 /**
  * A FileSource object opens a handle on a file and sends the data in
  * sequential order to a caller. When the data reaches the end-of-file marker,
- * it will return nothing.
+ * it will return nothing.asd
  * 
  * @author François Caron <francois.caron.7@ens.etsmtl.ca>
  */
