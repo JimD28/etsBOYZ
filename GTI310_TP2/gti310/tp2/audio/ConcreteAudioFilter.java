@@ -9,7 +9,7 @@ import gti310.tp2.io.FileSource;
 
 public class ConcreteAudioFilter implements AudioFilter {
 
-	//Création des variables pour le fichier stéréo et le fichier mono
+	//Crï¿½ation des variables pour le fichier stï¿½rï¿½o et le fichier mono
 	public FileSource stereo;
 	public FileSink mono;
 		
@@ -44,10 +44,10 @@ public class ConcreteAudioFilter implements AudioFilter {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void process() {
 
-		//Création 
+		//Crï¿½ation 
 		byte[] chunkID = stereo.pop(4);
 		byte[] chunkSize = stereo.pop(4);
 		byte[] format = stereo.pop(4);
@@ -63,7 +63,7 @@ public class ConcreteAudioFilter implements AudioFilter {
 		byte[] subChunk2Size = stereo.pop(4);
 		
 		long fileDataSize = convert4BytesToInt(subChunk2Size);
-		//Complexité 0(1)
+		//Complexitï¿½ 0(1)
 		long monoFileDataSize = fileDataSize/2;
 
 		boolean has2Channels = 1 == convert2BytesToInt(numChannels);
@@ -73,14 +73,14 @@ public class ConcreteAudioFilter implements AudioFilter {
 		} else {
 			System.out.println("The file is in stereo, a mono file will be created");
 
-			// Modification de parties du header pour que ça soit en mono
+			// Modification de parties du header pour que ï¿½a soit en mono
 			byte[] monoChunkSize = convertIntTo4Bytes((fileDataSize/2) + 36);			
 			byte[] monoNumChannels = convertIntTo2Bytes(1);			
 			byte[] monoByteRate = convertIntTo4Bytes(convert4BytesToInt(sampleRate) * (convert2BytesToInt(bitsPerSample)/8));
 			byte[] monoBlockAlign = convertIntTo2Bytes((convert2BytesToInt(bitsPerSample)/8));
 			byte[] monoSubChunk2Size = convertIntTo4Bytes(fileDataSize/2);
 			
-			//Création du header du fichier mono
+			//Crï¿½ation du header du fichier mono
 			mono.push(chunkID);
 			mono.push(monoChunkSize); //Nouveau ChunkSize du fichier mono
 			mono.push(format);
@@ -95,14 +95,14 @@ public class ConcreteAudioFilter implements AudioFilter {
 			mono.push(subChunk2Id);
 			mono.push(monoSubChunk2Size); //Nouveau SubChunk2Size du fichier mono
 						
-			/* Diviser le data en deux pour passer de stéréo à mono.
+			/* Diviser le data en deux pour passer de stï¿½rï¿½o ï¿½ mono.
 			 * Sauvegarde 2 bytes dans left side.
 			 * Sauvegarde 2 bytes dans rightside.
 			 * Calcul de la moyenne des 2 valeurs et la sauvegarder dans average.
 			 * Mettre cette moyenne des 2 valeurs dans 2 bytes et le mettre dans le mono file.
-			 * Recommencer jusqu'à remplis le file mono, donc la moitié de la taille du stereo file.
+			 * Recommencer jusqu'ï¿½ remplis le file mono, donc la moitiï¿½ de la taille du stereo file.
 			*/
-			// Complexité O(N)
+			// Complexitï¿½ O(N)
 			for (int i = 0; i < (monoFileDataSize) - 1; i+=2) {
 				short leftSide = ByteBuffer.wrap(stereo.pop(2)).order(ByteOrder.LITTLE_ENDIAN).getShort();
 				short rightSide = ByteBuffer.wrap(stereo.pop(2)).order(ByteOrder.LITTLE_ENDIAN).getShort();
