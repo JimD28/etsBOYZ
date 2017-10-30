@@ -30,18 +30,18 @@ public class SNRFilter implements AudioFilter{
 		bottomDataTotal = 0;
 		for(int i = 0;i < originalDataSizeInt; i++)
 		{
-			long upperData = 0;
-			long bottomData = 0;
+			int upperData = 0;
+			int bottomData = 0;
 			
-			long originalSample = (long) (originalFile.pop(1)[0] & 0xFF);
-			long comparedSample = (long) (comparedFile.pop(1)[0] & 0xFF);
+			int originalSample =  originalFile.pop(1)[0] & 0xFF;
+			int comparedSample =  comparedFile.pop(1)[0] & 0xFF;
 			
-			upperData = (long) (originalSample * originalSample);
-			bottomData = (long) Math.pow((originalSample - comparedSample), 2);
+			upperData = originalSample * originalSample;
+			bottomData = (int) Math.pow((originalSample - comparedSample), 2);
 			
 			
-			upperDataTotal += (long) (upperData);
-			bottomDataTotal += (long) (bottomData);
+			upperDataTotal += upperData;
+			bottomDataTotal += bottomData;
 		
 
 		}
