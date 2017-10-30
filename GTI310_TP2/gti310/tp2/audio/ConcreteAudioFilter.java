@@ -12,26 +12,6 @@ public class ConcreteAudioFilter implements AudioFilter {
 	//Création des variables pour le fichier stéréo et le fichier mono
 	public FileSource stereo;
 	public FileSink mono;
-	
-	//Création des variables pour le RIFF
-	//private byte[] chunkID;
-	//private byte[] chunkSize;
-	//private byte[] format;
-	
-	//Création des variables pour le fmt
-	//private byte[] subChunk1Id;
-	//private byte[] subChunk1Size;
- 	//private byte[] audioFormat;
-	//private byte[] numChannels;
-	//private byte[] sampleRate;
-	//private byte[] byteRate;
-	//private byte[] blockAllign;
-	//private byte[] bitsPerSample;
-	
-	//Création des variables pour le data
-	//private byte[] subChunk2Id;
-	//private byte[] subChunk2Size;
-	//private byte[] data;
 		
 	byte[] convertIntTo4Bytes(long value) {
 	    return new byte[] { 
@@ -67,6 +47,7 @@ public class ConcreteAudioFilter implements AudioFilter {
 	
 	public void process() {
 
+		//Création 
 		byte[] chunkID = stereo.pop(4);
 		byte[] chunkSize = stereo.pop(4);
 		byte[] format = stereo.pop(4);
@@ -82,6 +63,7 @@ public class ConcreteAudioFilter implements AudioFilter {
 		byte[] subChunk2Size = stereo.pop(4);
 		
 		long fileDataSize = convert4BytesToInt(subChunk2Size);
+		//Complexité 0(1)
 		long monoFileDataSize = fileDataSize/2;
 
 		boolean has2Channels = 1 == convert2BytesToInt(numChannels);
@@ -91,6 +73,7 @@ public class ConcreteAudioFilter implements AudioFilter {
 		} else {
 			System.out.println("The file is in stereo, a mono file will be created");
 
+			// Modification de parties du header pour que ça soit en mono
 			byte[] monoChunkSize = convertIntTo4Bytes((fileDataSize/2) + 36);			
 			byte[] monoNumChannels = convertIntTo2Bytes(1);			
 			byte[] monoByteRate = convertIntTo4Bytes(convert4BytesToInt(sampleRate) * (convert2BytesToInt(bitsPerSample)/8));
@@ -106,12 +89,20 @@ public class ConcreteAudioFilter implements AudioFilter {
 			mono.push(audioFormat);
 			mono.push(monoNumChannels); //Nouveau NumChannels du fichier mono
 			mono.push(sampleRate);
-			mono.push(monoByteRate);
+			mono.push(monoByteRate); //Nouveau ByteRate du fichier mono
 			mono.push(monoBlockAlign); //Nouveau BlockAlign du fichier mono
 			mono.push(bitsPerSample);
 			mono.push(subChunk2Id);
 			mono.push(monoSubChunk2Size); //Nouveau SubChunk2Size du fichier mono
-			
+						
+			/* Diviser le data en deux pour passer de stéréo à mono.
+			 * Sauvegarde 2 bytes dans left side.
+			 * Sauvegarde 2 bytes dans rightside.
+			 * Calcul de la moyenne des 2 valeurs et la sauvegarder dans average.
+			 * Mettre cette moyenne des 2 valeurs dans 2 bytes et le mettre dans le mono file.
+			 * Recommencer jusqu'à remplis le file mono, donc la moitié de la taille du stereo file.
+			*/
+			// Complexité O(N)
 			for (int i = 0; i < (monoFileDataSize) - 1; i+=2) {
 				short leftSide = ByteBuffer.wrap(stereo.pop(2)).order(ByteOrder.LITTLE_ENDIAN).getShort();
 				short rightSide = ByteBuffer.wrap(stereo.pop(2)).order(ByteOrder.LITTLE_ENDIAN).getShort();
@@ -119,6 +110,7 @@ public class ConcreteAudioFilter implements AudioFilter {
 				mono.push(ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN).putShort(average).array());
 			}
 		}
+		// Fermer le file mono et le file stereo
 		mono.close();
 		stereo.close();
 	}
