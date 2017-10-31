@@ -3,22 +3,23 @@ package gti310.tp2.audio;
 import java.io.FileNotFoundException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
-import java.util.Arrays;
+
+
 
 import gti310.tp2.io.FileSource;
 
 public class SNRFilter implements AudioFilter{
+	private String comparedLocationString;
 	private FileSource originalFile;
 	private FileSource comparedFile;
 	private byte[] dataSizeOriginal;
 	double SNRTotal;
 	long upperDataTotal;
 	long bottomDataTotal;
-	ArrayList<Double> tableauSNR = new ArrayList<Double>();
+	private String[][] tableauSNR = new String[2][8];
 
 	@Override
-	public void process() {
+	public void process(int compteur) {
 		originalFile.pop(40);
 		comparedFile.pop(44);
 		dataSizeOriginal = originalFile.pop(4);
@@ -46,14 +47,22 @@ public class SNRFilter implements AudioFilter{
 
 		}
 		
+
 		SNRTotal = (double) 10*Math.log10(upperDataTotal/bottomDataTotal);
-		tableauSNR.add(SNRTotal);
+		tableauSNR[0][compteur - 2] = comparedLocationString;
+		tableauSNR[1][compteur - 2] = Double.toString(SNRTotal);
+		
 		//System.out.println();
 		
 		
-		if(tableauSNR.size() == 8)
+		if(tableauSNR[1][7] != null)
 		{
-			System.out.println(insertionSort(tableauSNR));
+			insertionSort(tableauSNR);
+			for (int j= 0; j < tableauSNR[0].length; j++) {
+
+				System.out.println(tableauSNR[0][j]+ ": "+tableauSNR[1][j]);
+
+			}
 		}
 		
 	}
@@ -62,32 +71,50 @@ public class SNRFilter implements AudioFilter{
 	
 	
 	
-	public static ArrayList<Double> insertionSort(ArrayList<Double> tableauSNRUnsorted)
+	public static void insertionSort(String[][] tableauSNRUnsorted)
 	{
-		double temp;
-		for(int i = 1; i < tableauSNRUnsorted.size();i++)
+		double tempNumber;
+		String tempKey;
+		for(int i = 1; i < tableauSNRUnsorted[1].length;i++)
 		{
-			for(int j = i; j > 0; j--)
+			for(int j = i; j < tableauSNRUnsorted[1].length && j > 0; j--)
 			{
-				if(tableauSNRUnsorted.get(j) < tableauSNRUnsorted.get(j-1))
+				if(Double.parseDouble(tableauSNRUnsorted[1][j]) < Double.parseDouble(tableauSNRUnsorted[1][j-1]))
 				{
-					temp = tableauSNRUnsorted.get(j);
-					tableauSNRUnsorted.set(j, tableauSNRUnsorted.get(j-1));
-					tableauSNRUnsorted.set(j-1, temp);
+					tempNumber = Double.parseDouble(tableauSNRUnsorted[1][j]);
+					tableauSNRUnsorted[1][j] = tableauSNRUnsorted[1][j-1];
+					tableauSNRUnsorted[1][j-1] = "" + tempNumber;
+					
+					tempKey = tableauSNRUnsorted[0][j];
+					tableauSNRUnsorted[0][j] = tableauSNRUnsorted[0][j-1];
+					tableauSNRUnsorted[0][j-1] = tempKey;
+
+					
 				}
 			}
 		}
-		return tableauSNRUnsorted;
+
 	}
 	
 	public void storeFiles(String originalLocation, String comparedLocation)
 	{
 		try {
+	    comparedLocationString = comparedLocation.substring(comparedLocation.indexOf("App2"));
 		originalFile = new FileSource(originalLocation);
 		comparedFile = new FileSource(comparedLocation);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+
+
+
+
+
+	@Override
+	public void process() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

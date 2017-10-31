@@ -36,6 +36,7 @@ public class ConcreteAudioFilter implements AudioFilter {
 	    return bytes[0]  | (bytes[1] & 0xFF) << 8;
 	}
 	
+
 	public ConcreteAudioFilter(String stereoLocation, String monoLocation) {
 		try {
 			stereo = new FileSource(stereoLocation);
@@ -44,6 +45,7 @@ public class ConcreteAudioFilter implements AudioFilter {
 			e.printStackTrace();
 		}
 	}
+
 
 	public void process() {
 
@@ -113,6 +115,12 @@ public class ConcreteAudioFilter implements AudioFilter {
 		// Fermer le file mono et le file stereo
 		mono.close();
 		stereo.close();
+	}
+
+	@Override
+	public void process(int compteur) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
