@@ -18,4 +18,6 @@ public interface AudioFilter {
 	 * The function should make sure the input data is valid beforehand.
 	 */
 	void process();
+
+	void process(int compteur);
 }

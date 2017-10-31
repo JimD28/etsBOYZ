@@ -23,7 +23,7 @@ public class Application {
 			{
 				
 				snrFilter.storeFiles(args[1], args[i]);
-				snrFilter.process();
+				snrFilter.process(i);
 				i++;
 			}
 		}
